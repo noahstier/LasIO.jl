@@ -72,9 +72,18 @@ function load(s::Stream{format"LAS"}; mmap=false)
     # Extended Variable Length Records
     evlrs = Vector{ExtendedLasVariableLengthRecord}()
     println("Current pos: $(position(s))")
+    println("Start of wav pos: $(header.waveform_offset)")
     if lv == v"1.3" && header.waveform_offset > 0
         println(header.waveform_offset)
-        push!(evlrs, read(s, ExtendedLasVariableLengthRecord))
+        evlr = read(s, ExtendedLasVariableLengthRecord)
+        push!(evlrs, evlr)
+
+        # Read waveform packets
+        # pwaves = Vector{Array{Float32}}(length(pointdata))
+
+
+        # @show pwaves
+
     elseif lv == v"1.4" && header.n_evlr > 0
         println(header.evlr_offset)
         for i=1:header.n_evlr
@@ -83,6 +92,11 @@ function load(s::Stream{format"LAS"}; mmap=false)
     else
         nothing
     end
+
+    @show eof(s)
+
+    #
+
 
     header, pointdata, evlrs
 end
