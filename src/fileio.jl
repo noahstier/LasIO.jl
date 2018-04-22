@@ -26,6 +26,7 @@ end
 skiplasf(s::Union{Stream{format"LAS"}, Stream{format"LAZ"}, IO}) = read(s, UInt32)
 
 function load(f::File{format"LAS"}; mmap=false)
+    println("Reading $(f.filename)")
     open(f) do s
         load(s; mmap=mmap)
     end
@@ -33,6 +34,7 @@ end
 
 # Load pipe separately since it can't be memory mapped
 function load(s::Pipe)
+    println("Using pipe!")
     skiplasf(s)
     header = read(s, LasHeader)
     lv = VersionNumber(header.version_major, header.version_minor)
@@ -48,6 +50,7 @@ function load(s::Pipe)
 end
 
 function load(s::Stream{format"LAS"}; mmap=false)
+    println("Loading stream with mmap $mmap.")
     skiplasf(s)
     header = read(s, LasHeader)
     println(header)
@@ -128,7 +131,7 @@ end
 
 function save(s::Stream{format"LAS"}, header::LasHeader, pointdata::AbstractVector{<:LasPoint})
     # checks
-    header_n = header.records_count
+    header_n = header.records_count_new
     n = length(pointdata)
     msg = "number of records in header ($header_n) does not match data length ($n)"
     @assert header_n == n msg
@@ -136,7 +139,7 @@ function save(s::Stream{format"LAS"}, header::LasHeader, pointdata::AbstractVect
     # write header
     write(s, magic(format"LAS"))
     write(s, header)
-
+    println("$(position(s)) vs $(header.data_offset)")
     # write points
     for p in pointdata
         write(s, p)
