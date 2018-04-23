@@ -15,6 +15,7 @@ export
     # Types
     LasHeader,
     LasVariableLengthRecord,
+    ExtendedLasVariableLengthRecord,
     LasPoint,
     LasPoint0,
     LasPoint1,
