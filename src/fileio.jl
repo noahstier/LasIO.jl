@@ -51,12 +51,12 @@ function load(s::Stream{format"LAS"}; mmap=false)
     lv = VersionNumber(header.version_major, header.version_minor)
 
     n = header.records_count_new
-    extra_bytes = header.data_record_length - sizeof(pointtype)
     pointtype = pointformat(header)
+    extra_bytes = header.data_record_length - sizeof(pointtype)
 
     # Determine extra bytes
-    if extra_bytes != 0 && 4 in keys(h.variable_length_records)
-        ebs = h.variable_length_records[4].data  # extra_byte structures
+    if extra_bytes != 0 && 4 in keys(header.variable_length_records)
+        ebs = header.variable_length_records[4].data  # extra_byte structures
         total_size = sum([sizeof(eb.data_type) for eb in ebs])
 
         if total_size > extra_bytes
@@ -81,7 +81,7 @@ function load(s::Stream{format"LAS"}; mmap=false)
         pointdata = Vector{pointtype}(n)
         for i=1:n
             pointdata[i] = read(s, pointtype)
-            read(extra_bytes)  # skip extra bytes
+            extra_bytes > 0 && read(s, extra_bytes)  # skip extra bytes
         end
     end
 
