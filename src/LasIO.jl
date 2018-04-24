@@ -8,7 +8,7 @@ using FileIO
 using FixedPointNumbers
 using ColorTypes
 using GeometryTypes # for conversion
-using Compat
+using StaticArrays
 
 export
 
@@ -21,6 +21,13 @@ export
     LasPoint1,
     LasPoint2,
     LasPoint3,
+    LasPoint4,
+    LasPoint5,
+    LasPoint6,
+    LasPoint7,
+    LasPoint8,
+    LasPoint9,
+    LasPoint10,
     PointVector,
 
     # Functions on LasHeader
@@ -54,9 +61,9 @@ export
     RGB
 
 include("fixedstrings.jl")
+include("meta.jl")
 include("vlrs.jl")
 include("header.jl")
-include("meta.jl")
 include("point.jl")
 include("util.jl")
 include("fileio.jl")
